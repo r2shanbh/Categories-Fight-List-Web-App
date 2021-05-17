@@ -1,7 +1,8 @@
-<%- include("header") -%>
+<%- include("partials/header") -%>
 
   <div class="box" id="heading">
-    <h1> <%= listTitle %> </h1>
+    <h1> <%= category %> </h1>
+    <h2> <%= listTitle%></h2>
     <h3><%= day%></h3>
   </div>
 
@@ -13,14 +14,17 @@
           <p><%=  newListItems[i].item  %></p>
         </div>
         <div>
-          <input type = "hidden" name="listName" value = <%= listTitle %> > </input>
+          <input type = "hidden" name="username" value = <%= listTitle %> > </input>
+          <input type = "hidden" name="gameCode" value = <%= gameCode %> > </input>
         </div>
       </form>
     <% } %>
-      <form class="item" action="/" method="post">
+      <form class="item" action="/addItem" method="post">
         <input type="text" name="newItem" placeholder="New Item" autocomplete="off">
+        <input type = "hidden" name="username" value = <%= listTitle %> > </input>
+        <input type = "hidden" name="gameCode" value = <%= gameCode %> > </input>
         <button type="submit" name="list" value= <%= listTitle %> >+</button>
       </form>
   </div>
 
-<%- include("footer") -%>
+<%- include("partials/footer") -%>
