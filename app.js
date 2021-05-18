@@ -41,37 +41,20 @@ const unCheck = new Item ({item : "<-- Click on this box to remove an item"})
 
 const defaultItems = [unCheck];
 
-/*
-app.get("/", function(req, res) {
-  Item.find({}, function(err, foundItems){
-    if(err){
-      console.log(err);
-    }else{
-      if (foundItems.length == 0){
-        Item.insertMany(defaultItems, function(err){
-          if (err){
-            console.log(err);
-          }
-        });
-        res.redirect("/");
-      }
-      else{
-        res.render("list", {day: today, listTitle: "Today", newListItems: foundItems});
-      }
-    }
-  });
-
-});
-*/
-
 app.get("/", function(req,res){
-    res.render("main");
+    Game.find({}, function(err, gameBoard){
+      if(!err){
+        res.render("main", {activeGames : gameBoard});
+      } else{
+        console.log(err);
+      }
+    });
 });
 
 app.post("/newGame", function(req, res){
   const newCategory = req.body.newGameCategory;
   const random = Math.floor(Math.random() * 234);
-  const newCode = "FightList_"+ newCategory.substr(1,4) +"_"+random;
+  const newCode = "FightList_"+ newCategory.substr(0,3) +"_"+random;
 
   const dbItem = new Game({
     category : newCategory,
@@ -84,8 +67,6 @@ app.post("/newGame", function(req, res){
 app.post("/enterGame", function(req, res){
   const code= req.body.gameCode;
   const username = req.body.username;
-
-  console.log(code);
 
   Game.findOne({code : code} , function(err, game){
       if(!game){
@@ -141,15 +122,12 @@ app.post("/delete", function(req, res){
 
   Board.findOneAndUpdate({gameCode : gameCode, player : username}, {$pull : {items : {_id : ID }} }, { new: true},function(err, foundBoard){
     if(!err){
-      console.log("mee");
-      console.log(foundBoard);
       res.redirect("/boards/"+gameCode+"/"+username);
     }else{
       console.log(err);
     }
   });
 });
-
 
 app.post("/addItem", function(req, res){
   const itemName = req.body.newItem;
@@ -171,34 +149,10 @@ app.post("/addItem", function(req, res){
     res.redirect("/boards/"+gameCode+"/"+username);
 });
 
-
-/*
-app.get("/boards/listTitle/username", function(req,res){
-  const listName = _.capitalize(req.params.customList);
-
-  List.findOne({name : listName}, function(err, foundList){
-    if(!err){
-      if(!foundList){
-        const customList = new List ({
-          name : listName,
-          items : defaultItems
-        });
-        customList.save();
-        res.redirect("/"+listName);
-      }else{
-        res.render("list", {day: today, listTitle: listName, newListItems: foundList.items})
-      }
-
-    }else{
-      console.log(err);
-    }
-  });
-});
-*/
 app.get("/about", function(req, res){
   res.render("about");
 });
 
-app.listen(3000, function() {
+app.listen(process.env.PORT  || 3000, function() {
   console.log("Server started on port 3000");
 });
